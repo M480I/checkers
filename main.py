@@ -1,7 +1,10 @@
-from board import Board, Cell
-from piece import Piece
-from player import Player
+from game import  Game
+from move import Move
 
 
-board = Board()
-player1 = Player(board, True)
+game = Game()
+board = game.board
+player1 = game.player_down
+player2 = game.player_up
+
+print(board)
