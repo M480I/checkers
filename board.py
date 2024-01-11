@@ -1,4 +1,4 @@
-from move import moves
+from consts import moves
 
 
 class Cell:
@@ -11,11 +11,10 @@ class Cell:
         self.piece = None
         self.color = "B" if (row % 2) != (column % 2) else "W"
         self.coordinates = self.row, self.column
-        self.is_down = (row >= 5)
         
         self.adjacent_cells = {
-            "forward": [],
-            "backward": []
+            "up": [],
+            "down": []
         }
 
     
@@ -38,7 +37,7 @@ class Board:
         self.make_cells()
         self.fill_adjacents()
         
-    # make cells for board
+    # make cells for board>
     def make_cells(self):
         for x in range(self.row_count):
             row = []
@@ -60,14 +59,8 @@ class Board:
                         
                         if self.is_valid_cell(adj_x, adj_y):
                             adj_cell = self.cells[adj_x][adj_y]
-                            
-                            if (diff_mode == "down" and cell.is_down) or \
-                                    (diff_mode == "up" and not cell.is_down):
-                                mode = "backward"
-                            else:
-                                mode = "forward"
                                 
-                            cell.adjacent_cells[mode].append(adj_cell)
+                            cell.adjacent_cells[diff_mode].append(adj_cell)
     
     
     def is_valid_cell(self, x, y):

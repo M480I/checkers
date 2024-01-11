@@ -1,10 +1,6 @@
 from game import  Game
-from move import Move
 
 
-game = Game()
-board = game.board
-player1 = game.player_down
-player2 = game.player_up
+game = Game(clean_terminal=True, wait_for=.5, up_depth=5, down_depth=8)
 
-print(board)
+game.start_game()
