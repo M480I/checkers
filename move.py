@@ -160,7 +160,7 @@ class Move():
 
     def final_do(self):
         
-        if not self.rest_cells:
+        if not self.killed_pieces:
             self.piece.move(self.dest_cell)
             if self.get_king:
                 self.piece.is_king = True
@@ -180,7 +180,7 @@ class Move():
                     
     def do(self):
         
-        if not self.rest_cells:
+        if not self.killed_pieces:
             self.piece.move(self.dest_cell)
             if self.get_king:
                 self.piece.is_king = True
