@@ -10,12 +10,24 @@ class Game:
     
     
     def __init__(
-            self, random_first=True,
+            self, first_player=None,
             visible_board=True, wait_for=2, clean_terminal=True,
             up_depth=10, down_depth=10,
             endgame=8):
         
-        self.random_first = random_first
+        self.title = """
+   _____ _               _                 
+  / ____| |             | |                
+ | |    | |__   ___  ___| | _____ _ __ ___ 
+ | |    | '_ \ / _ \/ __| |/ / _ \ '__/ __|
+ | |____| | | |  __/ (__|   <  __/ |  \__ \\
+  \_____|_| |_|\___|\___|_|\_\___|_|  |___/
+                        
+                        
+                                           
+        """
+                
+        self.first_player = first_player
         self.visible_board = visible_board
         self.wait_for=wait_for
         self.clean_terminal=clean_terminal
@@ -36,9 +48,12 @@ class Game:
             self.up_player, 
         ]
                     
-        if self.random_first:
+        if self.first_player is None:
             random.shuffle(self.players)
-            
+        elif self.first_player is self.up_player:
+            self.players.reverse()
+        elif self.first_player is self.down_player:
+            pass
             
         first_player, second_player = self.players
         
@@ -69,26 +84,15 @@ class Game:
     def show_title(self):
         self.clean()
         
-        title = """
-   _____ _               _                 
-  / ____| |             | |                
- | |    | |__   ___  ___| | _____ _ __ ___ 
- | |    | '_ \ / _ \/ __| |/ / _ \ '__/ __|
- | |____| | | |  __/ (__|   <  __/ |  \__ \\
-  \_____|_| |_|\___|\___|_|\_\___|_|  |___/
-                        
-                        
-                                           
-        """
-        
-        print(title)
-        sleep(2)
+        print(self.title)
+        sleep(1)
         print(f"Player {self.players[0]} starts...\n\n")
-        sleep(2)
+        sleep(3)
         
     
     def show_board(self):
         self.clean()
+        print(self.title)
         print(self.board)
         sleep(self.wait_for)
         

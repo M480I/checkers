@@ -14,6 +14,7 @@ class Move:
         self.player = self.piece.player
         self.opponent = \
             game.up_player if self.player.is_down else game.down_player
+        # difference in coordinate of from_cell and to_cell
         self.diff = \
             [to_cell.coordinates[i] - from_cell.coordinates[i] for i in range(2)]
         

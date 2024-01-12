@@ -1,6 +1,6 @@
 from piece import Piece
 from move import Move
-from consts import INF
+from consts import INF, BIG_INF
 
 
 class Player:
@@ -71,7 +71,7 @@ class Player:
         return moves
     
     # minimax algorithm
-    def best_move(self, depth=0, max_depth=None, alpha=-INF * 2, beta=INF * 2) -> tuple[int, Move]:
+    def best_move(self, depth=0, max_depth=None, alpha=-BIG_INF, beta=BIG_INF) -> tuple[int, Move]:
         
         max_depth = self.max_depth if max_depth is None else max_depth
         
@@ -82,7 +82,7 @@ class Player:
         
         # maximize
         if self.is_down:
-            max_eval = -INF * 2
+            max_eval = -BIG_INF
             best_move = None
             for move in self.next_moves:
                 move.do_move()
@@ -103,7 +103,7 @@ class Player:
                 
          # minimize   
         else:
-            min_eval = INF * 2
+            min_eval = BIG_INF
             best_move = None
             for move in self.next_moves:
                 move.do_move()

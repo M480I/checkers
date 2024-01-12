@@ -10,3 +10,4 @@ moves = {
 }
 
 INF = 1000000000
+BIG_ING = 2 * INF
