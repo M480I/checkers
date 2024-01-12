@@ -27,7 +27,6 @@ class Game:
                                            
         """
                 
-        self.first_player = first_player
         self.visible_board = visible_board
         self.wait_for=wait_for
         self.clean_terminal=clean_terminal
@@ -35,12 +34,22 @@ class Game:
         self.board = Board()
         self.down_player = Player(self, True, max_depth=down_depth)
         self.up_player = Player(self, False, max_depth=up_depth)
+        
+        if first_player is not None:
+            if first_player.lower() == "up":
+                self.first_player = self.up_player 
+            elif first_player.lower() == "down":
+                self.first_player = self.down_player
+        else:
+            self.first_player = None
+                    
         self.down_player.opponent = self.up_player
         self.up_player.opponent = self.down_player  
         self.total_moves = 0
         self.winner = None
     
-    
+    # Todo
+    # handle draw
     def start_game(self):
         
         self.players = [
@@ -58,26 +67,21 @@ class Game:
         first_player, second_player = self.players
         
         self.show_title()
-        
+        if self.visible_board:
+            self.show_board()
+                        
         while not self.is_end():
-            
-            if self.visible_board:
-                self.show_board()
                 
             first_player.move()
-            
-            if self.visible_board:
-                self.show_board()
                 
             if self.is_end():
                 break
             
             second_player.move()
-            
-            if self.visible_board:
-                self.show_board()
+
         
         self.end()
+        self.show_board()
         self.show_result()
         
     

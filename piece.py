@@ -29,6 +29,13 @@ class Piece:
     
     # move piece to new_cell
     def move(self, new_cell):
+        
+        if new_cell.piece is self:
+            return
+        
+        if new_cell.piece is not None:
+            raise RuntimeError
+        
         self.cell.piece = None
         new_cell.piece = self
         self.cell = new_cell

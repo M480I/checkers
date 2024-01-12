@@ -4,9 +4,10 @@ from consts import moves
 class Cell:
     
 
-    def __init__(self, row, column) -> None:
+    def __init__(self, row, column, board) -> None:
         self.row = row
         self.column = column
+        self.board = board
         
         self.piece = None
         self.color = "B" if (row % 2) != (column % 2) else "W"
@@ -16,6 +17,19 @@ class Cell:
             "up": [],
             "down": []
         }
+
+
+    def next_diagonally(self, other):
+        if (other not in self.adjacent_cells["down"] 
+            and other not in self.adjacent_cells["up"]):
+            return None
+        
+        new_x, new_y = 2*other.row - self.row, 2*other.column - self.column
+        
+        if self.board.is_valid_cell(new_x, new_y):
+            return self.board.cells[new_x][new_y]
+        
+        return None
 
     
     def __str__(self) -> str:
@@ -42,7 +56,7 @@ class Board:
         for x in range(self.row_count):
             row = []
             for y in range(self.column_count):
-                row.append(Cell(x, y))
+                row.append(Cell(x, y, self))
             self.cells.append(row)    
                 
     # fill successors of each cell

@@ -1,6 +1,6 @@
 from piece import Piece
-from move import Move
-from consts import INF, BIG_INF
+from move import Transition, Move
+from consts import BIG_INF, SMALL_INF
 
 
 class Player:
@@ -34,41 +34,56 @@ class Player:
                 if cell.color == "W":
                     continue
 
-                self.pieces.append(Piece(cell=cell, player=self))        
+                self.pieces.append(Piece(cell=cell, player=self))
                                                 
-    # call with cell or/and piece as an argument
-    def remove_piece(self, piece=None, cell=None):
-        if piece is not None:
-            piece.cell.piece = None
-            self.pieces.remove(piece)
-        elif cell is not None:
-            self.pieces.remove(cell.piece)
-            cell.piece = None
+
+    def remove_piece(self, piece):
+        piece.cell.piece = None
+        self.pieces.remove(piece)
 
     
-    def add_removed_piece(self, piece, cell):
-        cell.piece = piece
+    def revive_piece(self, piece):
+        piece.cell.piece = piece
         self.pieces.append(piece)
+     
+     
+    def is_end_row(self, row):
+        if self.is_down:
+            return row == 0
+        return row == 7
         
-    
+    # Todo
+    # alter moves minimum and maximum length
     @property
     def next_moves(self):
         moves = []
         for piece in self.pieces:
             cell = piece.cell
             for next_cell in piece.next_cells:
-                move = Move(cell, next_cell, self.game)
-                if move.is_valid:
-                    moves.append(move)
-        moves.sort(key=lambda move: -move.score)
+                transition = Transition(cell, next_cell, self.game)
+                moves.extend(transition.moves)
 
-        if len(moves) < 16:
-            moves = moves[:8]
+        moves.sort(key=lambda move: -move.score)
+        
+        if moves:
+            if moves[0].score >= SMALL_INF:
+                tmp_moves = []
+                for move in moves:
+                    if move.score < SMALL_INF:
+                        break
+                    tmp_moves.append(move)
+                moves = tmp_moves
+
+        if len(moves) < 14:
+            moves = moves[:7]
         else:
             n = len(moves)
             moves = moves[:n // 2]
 
         return moves
+    
+    # Todo
+    # better length at the endgame
     
     # minimax algorithm
     def best_move(self, depth=0, max_depth=None, alpha=-BIG_INF, beta=BIG_INF) -> tuple[int, Move]:
@@ -85,14 +100,14 @@ class Player:
             max_eval = -BIG_INF
             best_move = None
             for move in self.next_moves:
-                move.do_move()
+                move.do()
                 eval, next_move = self.opponent.best_move(
                                                 depth=depth + 1,
                                                 max_depth=max_depth, 
                                                 alpha=alpha,
                                                 beta=beta,
                                                 )
-                move.undo_move()
+                move.undo()
                 if eval > max_eval:
                     max_eval = eval
                     best_move = move
@@ -106,14 +121,14 @@ class Player:
             min_eval = BIG_INF
             best_move = None
             for move in self.next_moves:
-                move.do_move()
+                move.do()
                 eval, _ = self.opponent.best_move(
                                                 depth=depth + 1,
                                                 max_depth=max_depth,
                                                 alpha=alpha,
                                                 beta=beta,
                                                 )
-                move.undo_move()
+                move.undo()
                 if eval < min_eval:
                     min_eval = eval
                     best_move = move
@@ -126,7 +141,8 @@ class Player:
     def move(self):
         self.game.total_moves += 1
         _, best_move = self.best_move()
-        best_move.do_move()
+        best_move.final_do()
+    
     
     def __str__(self) -> str:
         return f"{'⚫ at down' if self.is_down else '⚪ at up'}"

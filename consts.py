@@ -9,5 +9,6 @@ moves = {
     }
 }
 
+SMALL_INF = 10000
 INF = 1000000000
-BIG_ING = 2 * INF
+BIG_INF = 2 * INF
