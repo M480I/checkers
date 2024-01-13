@@ -73,10 +73,10 @@ class Player:
                     tmp_moves.append(move)
                 moves = tmp_moves
 
-        # default prune: check 8 of the best moves
-        if len(moves) > 8:
-            moves = moves[:8]
-        # endgame prune: check the best move (the depth is a lot larger)
+        # default prune: check 3 of the best moves
+        if len(moves) > 3:
+            moves = moves[:3]
+        # endgame prune: check the best move
         if len(moves) > 1 and (self.game.total_moves >= self.game.endgame
                 or len(self.opponent.pieces) <= 3):
             moves = moves[:1]
@@ -88,21 +88,21 @@ class Player:
         
         max_depth = self.max_depth if max_depth is None else max_depth
         
-        # if the game is ended don't go dipper
+        # if the game is ended don't go deeper
         if self.game.is_end():
             return self.game.evaluate_board(), None
-        # if the game is just started don't go dipper than max_depth/3
+        # if the game is just started don't go deeper than max_depth/3
         if (self.game.total_moves <= self.game.midgame 
                 and depth >= (max_depth // 3 + 1)):
             return self.game.evaluate_board(), None
-        # don't go dipper than the depth limit of the player starting the eval
+        # don't go deeper than the depth limit of the player starting the eval
         # unless it's the endgame
         if (depth > max_depth 
                 and (self.game.total_moves < self.game.endgame 
                      and len(self.opponent.pieces) > 3)):
             return self.game.evaluate_board(), None
-        # never go dipper than 8 * max_depth
-        if depth > max_depth * 8:
+        # never go deeper than 30 * max_depth
+        if depth > max_depth * 30:
             return self.game.evaluate_board(), None
         
         # maximize

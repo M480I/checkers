@@ -10,10 +10,10 @@ class Game:
     
     
     def __init__(
-            self, first_player=None,
+            self, first_player="down",
             visible_board=True, wait_for=2, clean_terminal=True,
             up_depth=10, down_depth=10,
-            midgame=20, endgame=100):
+            midgame=15, endgame=80):
         
         self.title = """
    _____ _               _                 
