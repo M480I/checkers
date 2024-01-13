@@ -136,10 +136,16 @@ class Move():
         
     def calculate_score(self):
         res = 0
+        
         # has_kill +SMALL_INF (mandatory kill)
         # kill +3, kill_king +5
-        # get king +5
-        # good dest +1
+        
+        # if opponent have more than 2 pieces
+            # get king +5
+            # good dest +1
+        # else
+            # get king +1
+            # good dest + 8
         
         if self.killed_pieces:
             res += SMALL_INF
@@ -150,10 +156,13 @@ class Move():
             else:
                 res += 3
                 
-        res += 5 * (self.get_king)
-        
         x, y = self.dest_cell.coordinates
-        res += (x in [0, 7] and y in [0, 7])  
+        if len(self.opponent.pieces) > 2:
+            res += 5 * (self.get_king)
+            res += (x in [0, 7] and y in [0, 7])
+        else:
+            res += (self.get_king)
+            res += 8 * (x in [0, 7] and y in [0, 7])
         
         return res
     

@@ -52,8 +52,7 @@ class Player:
             return row == 0
         return row == 7
         
-    # Todo
-    # alter moves minimum and maximum length
+
     @property
     def next_moves(self):
         moves = []
@@ -74,26 +73,37 @@ class Player:
                     tmp_moves.append(move)
                 moves = tmp_moves
 
-        if len(moves) < 14:
-            moves = moves[:7]
-        else:
-            n = len(moves)
-            moves = moves[:n // 2]
+        # default prune: check 8 of the best moves
+        if len(moves) > 8:
+            moves = moves[:8]
+        # endgame prune: check the best move (the depth is a lot larger)
+        if len(moves) > 1 and (self.game.total_moves >= self.game.endgame
+                or len(self.opponent.pieces) <= 3):
+            moves = moves[:1]
 
         return moves
-    
-    # Todo
-    # better length at the endgame
     
     # minimax algorithm
     def best_move(self, depth=0, max_depth=None, alpha=-BIG_INF, beta=BIG_INF) -> tuple[int, Move]:
         
         max_depth = self.max_depth if max_depth is None else max_depth
         
-        if self.game.is_end() \
-            or depth >= max_depth \
-            or (depth >= 5 and self.game.total_moves < self.game.endgame):
-                return self.game.evaluate_board(), None
+        # if the game is ended don't go dipper
+        if self.game.is_end():
+            return self.game.evaluate_board(), None
+        # if the game is just started don't go dipper than max_depth/3
+        if (self.game.total_moves <= self.game.midgame 
+                and depth >= (max_depth // 3 + 1)):
+            return self.game.evaluate_board(), None
+        # don't go dipper than the depth limit of the player starting the eval
+        # unless it's the endgame
+        if (depth > max_depth 
+                and (self.game.total_moves < self.game.endgame 
+                     and len(self.opponent.pieces) > 3)):
+            return self.game.evaluate_board(), None
+        # never go dipper than 8 * max_depth
+        if depth > max_depth * 8:
+            return self.game.evaluate_board(), None
         
         # maximize
         if self.is_down:

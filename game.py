@@ -13,7 +13,7 @@ class Game:
             self, first_player=None,
             visible_board=True, wait_for=2, clean_terminal=True,
             up_depth=10, down_depth=10,
-            endgame=8):
+            midgame=20, endgame=100):
         
         self.title = """
    _____ _               _                 
@@ -30,6 +30,7 @@ class Game:
         self.visible_board = visible_board
         self.wait_for=wait_for
         self.clean_terminal=clean_terminal
+        self.midgame = midgame
         self.endgame = endgame
         self.board = Board()
         self.down_player = Player(self, True, max_depth=down_depth)
@@ -48,8 +49,7 @@ class Game:
         self.total_moves = 0
         self.winner = None
     
-    # Todo
-    # handle draw
+    
     def start_game(self):
         
         self.players = [
@@ -97,6 +97,7 @@ class Game:
     def show_board(self):
         self.clean()
         print(self.title)
+        print(f"Total moves: {self.total_moves}\n\n")
         print(self.board)
         sleep(self.wait_for)
         
